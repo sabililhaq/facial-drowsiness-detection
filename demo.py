@@ -13,7 +13,13 @@ pipe.normalize = False
 
 from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates
 mp_face_mesh = mp.solutions.face_mesh
+
 cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("No webcam found, falling back to dummy.mp4 ...")
+    cap = cv2.VideoCapture("dummy.mp4")
+    if not cap.isOpened():
+        raise RuntimeError("No webcam and no dummy.mp4 found. Exiting.")
 
 start_time = time()
 x = 1 # displays the frame rate every 1 second
