@@ -8,10 +8,25 @@ info()    { echo -e "${GREEN}[INFO]${NC}  $*"; }
 warn()    { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 err_exit(){ echo -e "${RED}[ERROR]${NC} $*" >&2; exit 1; }
 
-PYTHON=$(command -v python3 || command -v python || err_exit "Python not found.")
-PY_MAJOR=$("$PYTHON" -c "import sys; print(sys.version_info.major)")
-PY_MINOR=$("$PYTHON" -c "import sys; print(sys.version_info.minor)")
-PY_VER="$PY_MAJOR.$PY_MINOR"
+for py_cmd in python3.11 python3.12 python3.10 python3.9 python3 python; do
+  if command -v "$py_cmd" >/dev/null 2>&1; then
+    PY_CANDIDATE=$(command -v "$py_cmd")
+    PY_MAJOR=$("$PY_CANDIDATE" -c "import sys; print(sys.version_info.major)")
+    PY_MINOR=$("$PY_CANDIDATE" -c "import sys; print(sys.version_info.minor)")
+    if [[ "$PY_MAJOR" -eq 3 && "$PY_MINOR" -ge 9 && "$PY_MINOR" -le 12 ]]; then
+      PYTHON="$PY_CANDIDATE"
+      PY_VER="$PY_MAJOR.$PY_MINOR"
+      break
+    fi
+  fi
+done
+
+if [[ -z "$PYTHON" ]]; then
+  PYTHON=$(command -v python3 || command -v python || err_exit "Python not found.")
+  PY_MAJOR=$("$PYTHON" -c "import sys; print(sys.version_info.major)")
+  PY_MINOR=$("$PYTHON" -c "import sys; print(sys.version_info.minor)")
+  PY_VER="$PY_MAJOR.$PY_MINOR"
+fi
 
 info "Detected Python $PY_VER at $PYTHON"
 [[ "$PY_MAJOR" -eq 3 && "$PY_MINOR" -ge 9 && "$PY_MINOR" -le 12 ]] \
@@ -27,6 +42,9 @@ fi
 
 source "$VENV_DIR/bin/activate"
 info "Activated: $(which python)"
+
+info "Creating raw dataset directories..."
+mkdir -p data/raw/YawDD/yawn data/raw/YawDD/no_yawn data/raw/ISDDS/yawn data/raw/ISDDS/no_yawn
 
 info "Upgrading pip..."
 pip install --quiet --upgrade pip
@@ -56,17 +74,17 @@ print("  Webcam: OK" if ok else "  Webcam: NOT FOUND (demo.py needs a working ca
 PYEOF
 
 [[ -f "final_model.pkl" ]] && info "final_model.pkl found." \
-  || warn "final_model.pkl NOT found — demo.py will crash. Run notebooks first."
+  || warn "final_model.pkl NOT found — demo.py will crash. Run ./train.sh first."
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN} Installation complete.${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "  Run the real-time detector:"
-echo "    source venv/bin/activate && python demo.py"
+echo "  Run the training step (generates dummy model if dataset is empty):"
+echo "    ./train.sh"
 echo ""
-echo "  Run the training notebooks:"
-echo "    source venv/bin/activate && jupyter notebook notebooks/"
+echo "  Run the real-time detector:"
+echo "    ./demo.sh"
 echo ""
 echo "  Press ESC inside the detector window to quit."
