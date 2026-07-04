@@ -74,7 +74,7 @@ print("  Webcam: OK" if ok else "  Webcam: NOT FOUND (demo.py needs a working ca
 PYEOF
 
 [[ -f "final_model.pkl" ]] && info "final_model.pkl found." \
-  || warn "final_model.pkl NOT found — demo.py will crash. Run ./train.sh first."
+  || warn "final_model.pkl NOT found — run ./train.sh next (or ./demo.sh, which runs training automatically)."
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

@@ -66,7 +66,7 @@ with mp_face_mesh.FaceMesh(
         data = DataFrame(data)
         
         prediction = pipe.predict(data)
-        drowsy = int(prediction)
+        drowsy = int(prediction.iloc[0])
         text_display = f"{urutans[i].upper()} FACE TERDETEKSI MENGUAP" if drowsy else f"{urutans[i].upper()} FACE NETRAL"
         color_display = (0, 0, 255) if drowsy else (255, 0, 0)
 

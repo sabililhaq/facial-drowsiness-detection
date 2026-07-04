@@ -61,8 +61,23 @@ chmod +x cleanup.sh && ./cleanup.sh
 
 ## ⚙️ Platform Notes
 
+* **Python:** 3.9–3.12 required. MediaPipe is pinned to `0.10.14` in `requirements.txt` (newer 0.10.x releases removed the legacy FaceMesh API used by this project).
+* **Webcam:** Required for the demo. `demo.sh` auto-runs `train.sh` if `final_model.pkl` is missing.
+* **No dataset needed:** If `data/raw/` is empty, `train.sh` creates a dummy model so the demo still runs.
 * **macOS:** Grant Camera access to Terminal / VS Code: *System Settings → Privacy & Security → Camera*.
 * **Linux/Ubuntu:** If the OpenCV window fails to open, run:
   ```bash
   sudo apt-get install -y libgl1 libglib2.0-0
   ```
+
+---
+
+## 🔧 Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `No module named 'mediapipe.python'` | Re-run `./install.sh` (ensures `mediapipe==0.10.14`). |
+| `TypeError: ... not 'Series'` | Use the latest `demo.py` from this repo. |
+| `Virtual environment 'venv' not found` | Run `./install.sh` first. |
+| `No webcam and no dummy.mp4 found` | Plug in / enable a webcam, or grant camera permission. |
+| OpenCV window does not appear (Linux) | Install `libgl1` and `libglib2.0-0` (see Platform Notes). |
