@@ -5,11 +5,10 @@ from pandas import DataFrame
 from pickle import load
 from time   import time
 from logreg import LogisticRegression
-from mypipe import MyPipeline
+from mypipe import MyPipeline, FEATURE_COLUMNS
 
 pipe = load(open("final_model.pkl", 'rb'))
 print("Berhasil load model")
-pipe.normalize = False
 
 from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates
 mp_face_mesh = mp.solutions.face_mesh
@@ -63,10 +62,10 @@ with mp_face_mesh.FaceMesh(
         data = array(data)
         data = data[:468, :]
         data = data.reshape([1, -1])
-        data = DataFrame(data)
+        data = DataFrame(data, columns=FEATURE_COLUMNS)
         
         prediction = pipe.predict(data)
-        drowsy = int(prediction.iloc[0])
+        drowsy = int(prediction.ravel()[0])
         text_display = f"{urutans[i].upper()} FACE TERDETEKSI MENGUAP" if drowsy else f"{urutans[i].upper()} FACE NETRAL"
         color_display = (0, 0, 255) if drowsy else (255, 0, 0)
 
