@@ -28,11 +28,13 @@ No dataset? `./train.sh` still works — it creates a dummy model so the demo ca
 Put images in folders created by `install.sh`:
 
 ```
-data/raw/YawDD/yawn/
-data/raw/YawDD/no_yawn/
+data/raw/YawDD/yawn/       # training
+data/raw/YawDD/no_yawn/    # training
+data/raw/ISDDS/yawn/       # testing
+data/raw/ISDDS/no_yawn/    # testing
 ```
 
-Then run `./train.sh` again.
+`./train.sh` trains on **YawDD** and evaluates on **ISDDS**.
 
 ## Troubleshooting
 
